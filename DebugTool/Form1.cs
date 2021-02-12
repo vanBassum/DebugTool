@@ -2,8 +2,6 @@
 using STDLib.Ethernet;
 using STDLib.JBVProtocol;
 using STDLib.JBVProtocol.Devices;
-using STDLib.JBVProtocol.DSP50xx;
-using STDLib.JBVProtocol.FunctionGenerator;
 using STDLib.Misc;
 using System;
 using System.Collections.Generic;
@@ -23,6 +21,7 @@ namespace DebugTool
     {
         JBVClient client = new JBVClient(SoftwareID.DebugTool);
         TcpSocketClient socket = new TcpSocketClient();
+
         BindingList<Device> devices = new BindingList<Device>();
         Device selectedDevice;
         public Form1()
@@ -34,8 +33,7 @@ namespace DebugTool
         {
             client.SetConnection(new TCPConnection(socket));
             client.LeaseRecieved += Client_LeaseRecieved;
-            Device.Init(client);
-            Device.OnDeviceFound += Device_OnDeviceFound;
+            client.OnDeviceFound += Device_OnDeviceFound;
             listBox1.DataSource = devices;
 
             string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -65,7 +63,7 @@ namespace DebugTool
         private void button2_Click(object sender, EventArgs e)
         {
             devices.Clear();
-            Device.SearchDevices();
+            client.SearchDevices();
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -197,4 +195,5 @@ namespace DebugTool
             button4.Enabled = true;
         }
     }
+
 }
