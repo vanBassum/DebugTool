@@ -80,17 +80,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NET_Library\FRMLib\FRMLib.csproj">
+    <Folder Include="Controls\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NET_Library\FRMLib\FRMLib.csproj">
       <Project>{6062fc18-1c98-4f9a-be4c-44171cbcb55e}</Project>
       <Name>FRMLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\NET_Library\STDLib\STDLib.csproj">
-      <Project>{704e85c9-0e59-40f1-950e-659c66ea401b}</Project>
+    <ProjectReference Include="..\NET_Library\STDLib\STDLib.csproj">
+      <Project>{0b0d2243-d829-4d22-aa93-dccfd2789236}</Project>
       <Name>STDLib</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controls\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

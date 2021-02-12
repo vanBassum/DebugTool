@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.30330.147
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugTool", "DebugTool\DebugTool.csproj", "{BA3B031A-F603-496A-A717-DD6E9D02CCCC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRMLib", "..\NET_Library\FRMLib\FRMLib.csproj", "{6062FC18-1C98-4F9A-BE4C-44171CBCB55E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRMLib", "NET_Library\FRMLib\FRMLib.csproj", "{6062FC18-1C98-4F9A-BE4C-44171CBCB55E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "STDLib", "..\NET_Library\STDLib\STDLib.csproj", "{704E85C9-0E59-40F1-950E-659C66EA401B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "STDLib", "NET_Library\STDLib\STDLib.csproj", "{0B0D2243-D829-4D22-AA93-DCCFD2789236}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{6062FC18-1C98-4F9A-BE4C-44171CBCB55E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6062FC18-1C98-4F9A-BE4C-44171CBCB55E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6062FC18-1C98-4F9A-BE4C-44171CBCB55E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{704E85C9-0E59-40F1-950E-659C66EA401B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{704E85C9-0E59-40F1-950E-659C66EA401B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{704E85C9-0E59-40F1-950E-659C66EA401B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{704E85C9-0E59-40F1-950E-659C66EA401B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B0D2243-D829-4D22-AA93-DCCFD2789236}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B0D2243-D829-4D22-AA93-DCCFD2789236}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B0D2243-D829-4D22-AA93-DCCFD2789236}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B0D2243-D829-4D22-AA93-DCCFD2789236}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
