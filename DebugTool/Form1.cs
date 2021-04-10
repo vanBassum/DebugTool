@@ -1,7 +1,6 @@
 ﻿using FRMLib;
 using STDLib.Ethernet;
 using STDLib.JBVProtocol;
-using STDLib.JBVProtocol.Devices;
 using STDLib.Misc;
 using System;
 using System.Collections.Generic;
@@ -10,190 +9,128 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DebugTool
 {
+
     public partial class Form1 : Form
     {
         JBVClient client = new JBVClient(SoftwareID.DebugTool);
-        TcpSocketClient socket = new TcpSocketClient();
+        TcpSocketClient tcpSocket = new TcpSocketClient();
+        CancellationTokenSource cts_connect;
 
-        BindingList<Device> devices = new BindingList<Device>();
-        Device selectedDevice;
+
         public Form1()
         {
             InitializeComponent();
+            menuStrip1.AddMenuItem("File/Exit", () => this.Close());
+            consoleTextbox1.Start();
+            consoleTextbox1.OnCommand += ConsoleTextbox1_OnCommand;
+        }
+
+        private void ConsoleTextbox1_OnCommand(object sender, FRMLib.Controls.CMDArgs e)
+        {
+            TLOGGER logger = new TLOGGER();
+            logger.Level = LogLevel.VERBOSE;
+            logger.Stream = e.OutputStream;
+            
+            Frame frame = new Frame();
+            frame.Type = Frame.FrameTypes.DataFrame;
+            frame.SetData(e.Command);
+            Frame rx = client.SendFrameAndWaitForReply(frame, logger, e.CancellationToken).Result;
+
+            if(rx != null)
+            {
+                string result = Encoding.ASCII.GetString(rx.GetData());
+                e.OutputStream.Write(result + "\n");
+            }
+
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            client.SetConnection(new TCPConnection(socket));
-            client.LeaseRecieved += Client_LeaseRecieved;
-            client.OnDeviceFound += Device_OnDeviceFound;
-            listBox1.DataSource = devices;
 
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            foreach (string file in Directory.GetFiles(path, "*.lst"))
+        }
+
+        private void button_connect_Click(object sender, EventArgs e)
+        {
+            if (client.Connection == null)
             {
-                listBox2.Items.Add(Path.GetFileName(file));
+                Connect();
             }
-
-
-        }
-
-        private void Client_LeaseRecieved(object sender, Lease e)
-        {
-            label1.InvokeIfRequired(() => label1.Text = e.ToString());
-        }
-
-        private void Device_OnDeviceFound(object sender, Device e)
-        {
-            listBox1.InvokeIfRequired(()=> devices.Add(e));
-        }
-
-        private async void button1_Click(object sender, EventArgs e)
-        {
-            button1.Enabled = !await socket.ConnectAsync(textBox1.Text);
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            devices.Clear();
-            client.SearchDevices();
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listBox1.SelectedItem is Device dev)
-                selectedDevice = dev;
-
-        }
-
-        private async void button3_Click(object sender, EventArgs e)
-        {
-            if (selectedDevice is FunctionGenerator dev)
+            else
             {
-                bool oke = await dev.FillScreen(pictureBox1.BackColor);
-            }
-
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            ColorDialog cd = new ColorDialog();
-
-            if (cd.ShowDialog() == DialogResult.OK)
-            {
-                Color c = cd.Color;
-                pictureBox1.BackColor = c;
-            }
-        }
-
-
-        int GetInt(string line, string pattern, int def)
-        {
-            int val = def;
-            Match m = Regex.Match(line, pattern);
-            if (m.Success)
-                val = int.Parse(m.Groups[1].Value);
-            return val;
-        }
-
-
-
-        async Task<bool> ParseLine(string line)
-        {
-            if (selectedDevice is FunctionGenerator dev)
-            {
-                if (line.StartsWith("BGND"))
+                switch (client.Connection.ConnectionStatus)
                 {
-                    Color c = Color.Black;
-                    int r = GetInt(line, @"R:(\d+)", c.R);
-                    int g = GetInt(line, @"G:(\d+)", c.G);
-                    int b = GetInt(line, @"B:(\d+)", c.B);
-                    return await dev.FillScreen(Color.FromArgb(r, g, b));
-                }
-                else if (line.StartsWith("DELAY"))
-                {
-                    int delay = GetInt(line, @"T:(\d+)", 1000);
-                    System.Threading.Thread.Sleep(delay);
-                    return true;
-                }
-                else if (line.StartsWith("LINE"))
-                {
-                    Color c = Color.Red;
-                    int r = GetInt(line, @"R:(\d+)", c.R);
-                    int g = GetInt(line, @"G:(\d+)", c.G);
-                    int b = GetInt(line, @"B:(\d+)", c.B);
-                    UInt16 x1 = (UInt16)GetInt(line, @"X1:(\d+)", 0);
-                    UInt16 x2 = (UInt16)GetInt(line, @"X2:(\d+)", 0);
-                    UInt16 y1 = (UInt16)GetInt(line, @"Y1:(\d+)", 0);
-                    UInt16 y2 = (UInt16)GetInt(line, @"Y2:(\d+)", 0);
-
-                    return await dev.DrawLine(x1, y1, x2, y2, Color.FromArgb(r, g, b));
+                    case ConnectionStatus.Connected:
+                        throw new NotImplementedException();
+                        break;
+                    case ConnectionStatus.Disconnected:
+                    case ConnectionStatus.Error:
+                    case ConnectionStatus.Canceled:
+                        Connect();
+                        break;
+                    case ConnectionStatus.Connecting:
+                        cts_connect.Cancel();
+                        break;
                 }
             }
-            return false;
         }
 
-        private async void button4_Click(object sender, EventArgs e)
+        void Connect()
         {
-            button4.Enabled = false;
+            int timeout = 1000;
 
-            if (listBox2.SelectedItem is string file)
+            if (!int.TryParse(textBox_timeout.Text, out timeout))
+                textBox_timeout.Text = timeout.ToString();
+
+
+            cts_connect = new CancellationTokenSource(timeout);
+
+            switch (tabControl1.SelectedIndex)
             {
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                case 0:         //TCP/IP
+                    client.Connection = tcpSocket;
+                    client.Connection.PropertyChanged += Connection_PropertyChanged;
+                    tcpSocket.ConnectAsync(textBox_tcpip_host.Text, 31600, cts_connect);
+                    break;
+            }
+        }
 
-                string[] lines;
-
-                using (StreamReader rdr = new StreamReader(Path.Combine(path, file)))
-                    lines = rdr.ReadToEnd().Split('\n');
-
-
-
-                int i = 0;
-
-                for(i = 0; i<lines.Length; i++)
+        private void Connection_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(IConnection.ConnectionStatus))
+            {
+                if (sender is IConnection connection)
                 {
-                    
-                    string line = lines[i].Trim('\r');
+                    label1.InvokeIfRequired(()=> {
+                        label1.Text = connection.ConnectionStatus.ToString();
 
-                    label2.Text = $"{i} - {line}";
-
-                    if (line.StartsWith("GOTO"))
-                    {
-                        string label = line.Substring(4).Trim('\t').Trim(' ') + ":";
-
-                        int ind = 0;
-                        for (ind = 0; ind < lines.Length; ind++)
+                        switch (connection.ConnectionStatus)
                         {
-                            if (lines[ind].StartsWith(label))
-                            {
-                                i = ind;   //Next round i will be increased by 1.
+                            case ConnectionStatus.Connected:
+                                button_connect.Text = "Disconnect";
                                 break;
-                            }
+                            case ConnectionStatus.Disconnected:
+                            case ConnectionStatus.Error:
+                            case ConnectionStatus.Canceled:
+                                button_connect.Text = "Connect";
+                                break;
+                            case ConnectionStatus.Connecting:
+                                button_connect.Text = "Cancel";
+                                break;
                         }
-                    }
-                    else
-                    {
-                        bool oke = await ParseLine(line);
-                        if (oke)
-                        {
-
-                        }
-                        else
-                        {
-
-                        }
-                    }
+                    });
                 }
             }
-            button4.Enabled = true;
         }
     }
-
 }
