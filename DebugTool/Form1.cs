@@ -25,14 +25,13 @@ namespace DebugTool
         JBVClient client = new JBVClient(SoftwareID.DebugTool);
         TcpSocketClient tcpSocket = new TcpSocketClient();
         CancellationTokenSource cts_connect;
-
-
         public Form1()
         {
             InitializeComponent();
             menuStrip1.AddMenuItem("File/Exit", () => this.Close());
             consoleTextbox1.Start();
             consoleTextbox1.OnCommand += ConsoleTextbox1_OnCommand;
+            comboBox1.DataSource = Enum.GetValues(typeof(Frame.FrameTypes));
         }
 
         private void ConsoleTextbox1_OnCommand(object sender, FRMLib.Controls.CMDArgs e)
@@ -42,7 +41,14 @@ namespace DebugTool
             logger.Stream = e.OutputStream;
             
             Frame frame = new Frame();
-            frame.Type = Frame.FrameTypes.DataFrame;
+            comboBox1.InvokeIfRequired(()=> {
+                if (comboBox1.SelectedItem is Frame.FrameTypes ft)
+                    frame.Type = ft;
+                frame.Options = (checkBox1.Checked ? Frame.FrameOptions.Broadcast : Frame.FrameOptions.None) | (checkBox2.Checked ? Frame.FrameOptions.ASCII : Frame.FrameOptions.None);
+            });
+            
+
+           
             frame.SetData(e.Command);
             Frame rx = client.SendFrameAndWaitForReply(frame, logger, e.CancellationToken).Result;
 
@@ -111,8 +117,8 @@ namespace DebugTool
             {
                 if (sender is IConnection connection)
                 {
-                    label1.InvokeIfRequired(()=> {
-                        label1.Text = connection.ConnectionStatus.ToString();
+                    textBox1.InvokeIfRequired(()=> {
+                        textBox1.Text = connection.ConnectionStatus.ToString();
 
                         switch (connection.ConnectionStatus)
                         {
