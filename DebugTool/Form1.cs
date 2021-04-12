@@ -31,7 +31,6 @@ namespace DebugTool
             menuStrip1.AddMenuItem("File/Exit", () => this.Close());
             consoleTextbox1.Start();
             consoleTextbox1.OnCommand += ConsoleTextbox1_OnCommand;
-            comboBox1.DataSource = Enum.GetValues(typeof(Frame.FrameTypes));
         }
 
         private void ConsoleTextbox1_OnCommand(object sender, FRMLib.Controls.CMDArgs e)
@@ -41,10 +40,9 @@ namespace DebugTool
             logger.Stream = e.OutputStream;
             
             Frame frame = new Frame();
-            comboBox1.InvokeIfRequired(()=> {
-                if (comboBox1.SelectedItem is Frame.FrameTypes ft)
-                    frame.Type = ft;
-                frame.Options = (checkBox1.Checked ? Frame.FrameOptions.Broadcast : Frame.FrameOptions.None) | (checkBox2.Checked ? Frame.FrameOptions.ASCII : Frame.FrameOptions.None);
+
+            checkBox1.InvokeIfRequired(()=> {
+                frame.Opts = (checkBox1.Checked ? Frame.Options.Broadcast : Frame.Options.None) | (checkBox2.Checked ? Frame.Options.ASCII : Frame.Options.None) | Frame.Options.Request;
             });
             
 
