@@ -3,7 +3,6 @@ using STDLib.Ethernet;
 using STDLib.JBVProtocol;
 using STDLib.Misc;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -19,10 +18,9 @@ using System.Windows.Forms;
 
 namespace DebugTool
 {
-
     public partial class Form1 : Form
     {
-        JBVClient client = new JBVClient(SoftwareID.DebugTool);
+        Client client = new Client();
         TcpSocketClient tcpSocket = new TcpSocketClient();
         CancellationTokenSource cts_connect;
         public Form1()
@@ -33,12 +31,47 @@ namespace DebugTool
             consoleTextbox1.OnCommand += ConsoleTextbox1_OnCommand;
         }
 
+        public static byte[] StringToByteArray(string hex)
+        {
+            return Enumerable.Range(0, hex.Length)
+                             .Where(x => x % 3 == 0)
+                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                             .ToArray();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+        public static string ByteArrayToString(byte[] ba)
+        {
+            StringBuilder hex = new StringBuilder(ba.Length * 2);
+            foreach (byte b in ba)
+                hex.AppendFormat("{0:x2}", b);
+            return hex.ToString();
+        }
+
+
         private void ConsoleTextbox1_OnCommand(object sender, FRMLib.Controls.CMDArgs e)
         {
             TLOGGER logger = new TLOGGER();
             logger.Level = LogLevel.VERBOSE;
             logger.Stream = e.OutputStream;
-            
+
+            byte[] dst = { 0xac, 0x67, 0xb2, 0x35, 0xa5, 0xd3 };
+
+
+            Client.Message reply = client.SendMessage(dst, e.Command).Result;
+            logger.LOGI($"Rx {Encoding.ASCII.GetString(reply.Data)}");
+
+
+
+
+
+
+
+
+            /*
             Frame frame = new Frame();
 
             checkBox1.InvokeIfRequired(()=> {
@@ -55,23 +88,26 @@ namespace DebugTool
                 string result = Encoding.ASCII.GetString(rx.GetData());
                 e.OutputStream.Write(result + "\n");
             }
-
-
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
+            */
 
         }
+
+        
 
         private void button_connect_Click(object sender, EventArgs e)
         {
+            Connect();
+            /*
+            tcpSocket.ConnectAsync();
+
+
             if (client.Connection == null)
             {
-                Connect();
+                
             }
             else
             {
+                
                 switch (client.Connection.ConnectionStatus)
                 {
                     case ConnectionStatus.Connected:
@@ -86,11 +122,14 @@ namespace DebugTool
                         cts_connect.Cancel();
                         break;
                 }
+                
             }
+            */
         }
 
-        void Connect()
+        async void Connect()
         {
+            
             int timeout = 1000;
 
             if (!int.TryParse(textBox_timeout.Text, out timeout))
@@ -102,15 +141,17 @@ namespace DebugTool
             switch (tabControl1.SelectedIndex)
             {
                 case 0:         //TCP/IP
-                    client.Connection = tcpSocket;
-                    client.Connection.PropertyChanged += Connection_PropertyChanged;
-                    tcpSocket.ConnectAsync(textBox_tcpip_host.Text, 31600, cts_connect);
+                    client.SetConnection(tcpSocket);
+                    tcpSocket.PropertyChanged += Connection_PropertyChanged;
+                    await tcpSocket.ConnectAsync(textBox_tcpip_host.Text, 31600, cts_connect);
                     break;
             }
+            
         }
 
         private void Connection_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            
             if(e.PropertyName == nameof(IConnection.ConnectionStatus))
             {
                 if (sender is IConnection connection)
@@ -135,6 +176,7 @@ namespace DebugTool
                     });
                 }
             }
+            
         }
     }
 }

@@ -38,7 +38,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button_connect = new System.Windows.Forms.Button();
@@ -46,17 +45,17 @@
             this.label2 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
-            this.consoleTextbox1 = new FRMLib.Controls.ConsoleTextbox();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.frameTypesBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.consoleTextbox1 = new FRMLib.Controls.ConsoleTextbox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.SuspendLayout();
@@ -68,6 +67,7 @@
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.frameTypesBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -134,7 +134,7 @@
             this.textBox_tcpip_host.Name = "textBox_tcpip_host";
             this.textBox_tcpip_host.Size = new System.Drawing.Size(94, 20);
             this.textBox_tcpip_host.TabIndex = 6;
-            this.textBox_tcpip_host.Text = "192.168.11.30";
+            this.textBox_tcpip_host.Text = "192.168.11.40";
             // 
             // label3
             // 
@@ -172,10 +172,6 @@
             this.checkBox2.TabIndex = 14;
             this.checkBox2.Text = "ASCII";
             this.checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // form1BindingSource
-            // 
-            this.form1BindingSource.DataSource = typeof(DebugTool.Form1);
             // 
             // checkBox1
             // 
@@ -253,15 +249,6 @@
             this.splitContainer4.SplitterDistance = 222;
             this.splitContainer4.TabIndex = 4;
             // 
-            // consoleTextbox1
-            // 
-            this.consoleTextbox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.consoleTextbox1.Location = new System.Drawing.Point(0, 0);
-            this.consoleTextbox1.Name = "consoleTextbox1";
-            this.consoleTextbox1.Size = new System.Drawing.Size(862, 489);
-            this.consoleTextbox1.TabIndex = 0;
-            this.consoleTextbox1.Text = "";
-            // 
             // splitContainer3
             // 
             this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -288,6 +275,19 @@
             this.menuStrip1.TabIndex = 6;
             this.menuStrip1.Text = "menuStrip1";
             // 
+            // form1BindingSource
+            // 
+            this.form1BindingSource.DataSource = typeof(DebugTool.Form1);
+            // 
+            // consoleTextbox1
+            // 
+            this.consoleTextbox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.consoleTextbox1.Location = new System.Drawing.Point(0, 0);
+            this.consoleTextbox1.Name = "consoleTextbox1";
+            this.consoleTextbox1.Size = new System.Drawing.Size(862, 489);
+            this.consoleTextbox1.TabIndex = 0;
+            this.consoleTextbox1.Text = "";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -306,7 +306,6 @@
             this.tabPage1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
@@ -318,6 +317,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.frameTypesBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
