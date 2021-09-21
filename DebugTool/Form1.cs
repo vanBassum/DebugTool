@@ -58,11 +58,13 @@ namespace DebugTool
             logger.Level = LogLevel.VERBOSE;
             logger.Stream = e.OutputStream;
 
-            byte[] dst = { 0xac, 0x67, 0xb2, 0x35, 0xa5, 0xd3 };
 
+            RequestFrame request = new RequestFrame();
+            request.Data = e.Command;
+            request.DstMAC = new byte[]{ 0xac, 0x67, 0xb2, 0x35, 0xa5, 0xd3 };
 
-            Client.Message reply = client.SendMessage(dst, e.Command).Result;
-            logger.LOGI($"Rx {Encoding.ASCII.GetString(reply.Data)}");
+            ResponseFrame response = client.SendRequest(request).Result;
+            logger.LOGI($"Rx {Encoding.ASCII.GetString(response.Data)}");
 
 
 
