@@ -5,6 +5,7 @@ using STDLib.Misc;
 using System;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -58,14 +59,18 @@ namespace DebugTool
             logger.Level = LogLevel.VERBOSE;
             logger.Stream = e.OutputStream;
 
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             RequestFrame request = new RequestFrame();
             request.Data = e.Command;
             request.DstMAC = new byte[]{ 0xac, 0x67, 0xb2, 0x35, 0xa5, 0xd3 };
 
             ResponseFrame response = client.SendRequest(request).Result;
-            logger.LOGI($"Rx {Encoding.ASCII.GetString(response.Data)}");
-
+            stopwatch.Stop();
+            logger.LOGI($"Recieved {response.Data.Length} bytes from {ByteArrayToString(response.SrcMAC)} in {stopwatch.ElapsedMilliseconds}ms");
+            logger.LOGI(Encoding.ASCII.GetString(response.Data));
+            logger.LOGI("");
 
 
 
