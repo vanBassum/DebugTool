@@ -24,12 +24,17 @@ namespace DebugTool
         Client client = new Client();
         TcpSocketClient tcpSocket = new TcpSocketClient();
         CancellationTokenSource cts_connect;
+        Discovery discovery = new Discovery();
+        UDPDiscoveryService service = new UDPDiscoveryService();
+
         public Form1()
         {
             InitializeComponent();
             menuStrip1.AddMenuItem("File/Exit", () => this.Close());
             consoleTextbox1.Start();
             consoleTextbox1.OnCommand += ConsoleTextbox1_OnCommand;
+
+            discovery.AddService(service);
         }
 
         public static byte[] StringToByteArray(string hex)
@@ -184,6 +189,11 @@ namespace DebugTool
                 }
             }
             
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            discovery.Test();
         }
     }
 }
