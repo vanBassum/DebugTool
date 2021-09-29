@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
@@ -23,9 +24,9 @@ namespace DebugTool
     {
         Client client = new Client();
         TcpSocketClient tcpSocket = new TcpSocketClient();
+        UdpSocketClient udpSocket = new UdpSocketClient();
         CancellationTokenSource cts_connect;
-        Discovery discovery = new Discovery();
-        UDPDiscoveryService service = new UDPDiscoveryService();
+
 
         public Form1()
         {
@@ -34,7 +35,8 @@ namespace DebugTool
             consoleTextbox1.Start();
             consoleTextbox1.OnCommand += ConsoleTextbox1_OnCommand;
 
-            discovery.AddService(service);
+            udpSocket.Connect(new IPEndPoint(IPAddress.Broadcast, 51100));
+            client.AddConnection(udpSocket);
         }
 
         public static byte[] StringToByteArray(string hex)
@@ -71,11 +73,11 @@ namespace DebugTool
             request.Data = e.Command;
             request.DstMAC = new byte[]{ 0xac, 0x67, 0xb2, 0x35, 0xa5, 0xd3 };
 
-            ResponseFrame response = client.SendRequest(request).Result;
-            stopwatch.Stop();
-            logger.LOGI($"Recieved {response.Data.Length} bytes from {ByteArrayToString(response.SrcMAC)} in {stopwatch.ElapsedMilliseconds}ms");
-            logger.LOGI(Encoding.ASCII.GetString(response.Data));
-            logger.LOGI("");
+            //ResponseFrame response = client.SendRequest(request).Result;
+            //stopwatch.Stop();
+            //logger.LOGI($"Recieved {response.Data.Length} bytes from {ByteArrayToString(response.SrcMAC)} in {stopwatch.ElapsedMilliseconds}ms");
+            //logger.LOGI(Encoding.ASCII.GetString(response.Data));
+            //logger.LOGI("");
 
 
 
@@ -142,22 +144,22 @@ namespace DebugTool
         async void Connect()
         {
             
-            int timeout = 1000;
-
-            if (!int.TryParse(textBox_timeout.Text, out timeout))
-                textBox_timeout.Text = timeout.ToString();
-
-
-            cts_connect = new CancellationTokenSource(timeout);
-
-            switch (tabControl1.SelectedIndex)
-            {
-                case 0:         //TCP/IP
-                    client.SetConnection(tcpSocket);
-                    tcpSocket.PropertyChanged += Connection_PropertyChanged;
-                    await tcpSocket.ConnectAsync(textBox_tcpip_host.Text, 31600, cts_connect);
-                    break;
-            }
+            //int timeout = 1000;
+            //
+            //if (!int.TryParse(textBox_timeout.Text, out timeout))
+            //    textBox_timeout.Text = timeout.ToString();
+            //
+            //
+            //cts_connect = new CancellationTokenSource(timeout);
+            //
+            //switch (tabControl1.SelectedIndex)
+            //{
+            //    case 0:         //TCP/IP
+            //        client.SetConnection(tcpSocket);
+            //        tcpSocket.PropertyChanged += Connection_PropertyChanged;
+            //        await tcpSocket.ConnectAsync(textBox_tcpip_host.Text, 31600, cts_connect);
+            //        break;
+            //}
             
         }
 
@@ -193,7 +195,7 @@ namespace DebugTool
 
         private void button1_Click(object sender, EventArgs e)
         {
-            discovery.Test();
+            client.SendDiscoveryRequest();
         }
     }
 }
