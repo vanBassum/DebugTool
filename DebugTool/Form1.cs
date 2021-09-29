@@ -71,7 +71,7 @@ namespace DebugTool
 
             RequestFrame request = new RequestFrame();
             request.Data = e.Command;
-            request.DstMAC = new byte[]{ 0xac, 0x67, 0xb2, 0x35, 0xa5, 0xd3 };
+            //request.DstMAC = new byte[]{ 0xac, 0x67, 0xb2, 0x35, 0xa5, 0xd3 };
 
             //ResponseFrame response = client.SendRequest(request).Result;
             //stopwatch.Stop();
@@ -196,6 +196,11 @@ namespace DebugTool
         private void button1_Click(object sender, EventArgs e)
         {
             client.SendDiscoveryRequest();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            client.Test();
         }
     }
 }
