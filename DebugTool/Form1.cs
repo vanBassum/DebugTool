@@ -23,9 +23,8 @@ namespace DebugTool
     public partial class Form1 : Form
     {
         Client client = new Client();
-        TcpSocketClient tcpSocket = new TcpSocketClient();
+        
         UdpSocketClient udpSocket = new UdpSocketClient();
-        CancellationTokenSource cts_connect;
 
 
         public Form1()
@@ -71,97 +70,25 @@ namespace DebugTool
 
             RequestFrame request = new RequestFrame();
             request.Data = e.Command;
-            //request.DstMAC = new byte[]{ 0xac, 0x67, 0xb2, 0x35, 0xa5, 0xd3 };
+            request.DstAddress = 0x000010c2d18e0d84;
 
-            //ResponseFrame response = client.SendRequest(request).Result;
-            //stopwatch.Stop();
-            //logger.LOGI($"Recieved {response.Data.Length} bytes from {ByteArrayToString(response.SrcMAC)} in {stopwatch.ElapsedMilliseconds}ms");
-            //logger.LOGI(Encoding.ASCII.GetString(response.Data));
-            //logger.LOGI("");
-
-
-
-
-
-
-
-            /*
-            Frame frame = new Frame();
-
-            checkBox1.InvokeIfRequired(()=> {
-                frame.Opts = (checkBox1.Checked ? Frame.Options.Broadcast : Frame.Options.None) | (checkBox2.Checked ? Frame.Options.ASCII : Frame.Options.None) | Frame.Options.Request;
-            });
-            
-
-           
-            frame.SetData(e.Command);
-            Frame rx = client.SendFrameAndWaitForReply(frame, logger, e.CancellationToken).Result;
-
-            if(rx != null)
-            {
-                string result = Encoding.ASCII.GetString(rx.GetData());
-                e.OutputStream.Write(result + "\n");
-            }
-            */
-
+            ResponseFrame response = client.SendRequest(request).Result;
+            stopwatch.Stop();
+            logger.LOGI($"Recieved {response.Data.Length} bytes from {response.DstAddress.ToString("X16")} in {stopwatch.ElapsedMilliseconds}ms");
+            logger.LOGI(Encoding.ASCII.GetString(response.Data));
+            logger.LOGI("");
         }
 
         
 
-        private void button_connect_Click(object sender, EventArgs e)
+        private async void button_connect_Click(object sender, EventArgs e)
         {
-            Connect();
-            /*
-            tcpSocket.ConnectAsync();
-
-
-            if (client.Connection == null)
-            {
-                
-            }
-            else
-            {
-                
-                switch (client.Connection.ConnectionStatus)
-                {
-                    case ConnectionStatus.Connected:
-                        throw new NotImplementedException();
-                        break;
-                    case ConnectionStatus.Disconnected:
-                    case ConnectionStatus.Error:
-                    case ConnectionStatus.Canceled:
-                        Connect();
-                        break;
-                    case ConnectionStatus.Connecting:
-                        cts_connect.Cancel();
-                        break;
-                }
-                
-            }
-            */
+            button_connect.Enabled = false;
+            TcpSocketClient tcpSocket = new TcpSocketClient();
+            await tcpSocket.ConnectAsync(textBox_tcpip_host.Text, int.Parse(textBox_tcpip_port.Text));
+            client.AddConnection(tcpSocket);
         }
 
-        async void Connect()
-        {
-            
-            //int timeout = 1000;
-            //
-            //if (!int.TryParse(textBox_timeout.Text, out timeout))
-            //    textBox_timeout.Text = timeout.ToString();
-            //
-            //
-            //cts_connect = new CancellationTokenSource(timeout);
-            //
-            //switch (tabControl1.SelectedIndex)
-            //{
-            //    case 0:         //TCP/IP
-            //        client.SetConnection(tcpSocket);
-            //        tcpSocket.PropertyChanged += Connection_PropertyChanged;
-            //        await tcpSocket.ConnectAsync(textBox_tcpip_host.Text, 31600, cts_connect);
-            //        break;
-            //}
-            
-        }
 
         private void Connection_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
