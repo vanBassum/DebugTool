@@ -45,13 +45,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
-            this.button1 = new System.Windows.Forms.Button();
             this.consoleTextbox1 = new FRMLib.Controls.ConsoleTextbox();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.frameTypesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -62,7 +60,6 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
-            this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
@@ -245,27 +242,12 @@
             this.splitContainer4.Name = "splitContainer4";
             this.splitContainer4.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // splitContainer4.Panel1
-            // 
-            this.splitContainer4.Panel1.Controls.Add(this.button2);
-            this.splitContainer4.Panel1.Controls.Add(this.button1);
-            // 
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.consoleTextbox1);
             this.splitContainer4.Size = new System.Drawing.Size(862, 715);
             this.splitContainer4.SplitterDistance = 222;
             this.splitContainer4.TabIndex = 4;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(57, 50);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(94, 23);
-            this.button1.TabIndex = 15;
-            this.button1.Text = "Discovery";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // consoleTextbox1
             // 
@@ -306,16 +288,6 @@
             // 
             this.form1BindingSource.DataSource = typeof(DebugTool.Form1);
             // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(384, 100);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(94, 23);
-            this.button2.TabIndex = 16;
-            this.button2.Text = "Tert";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -337,7 +309,6 @@
             this.splitContainer2.Panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
@@ -375,8 +346,6 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.BindingSource form1BindingSource;
         private System.Windows.Forms.CheckBox checkBox2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
     }
 }
 
